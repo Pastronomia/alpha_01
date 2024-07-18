@@ -1,16 +1,22 @@
 package com.ejemplo.carmenuy.dao;
 
-import com.ejemplo.carmenuy.model.Partida;
-import com.ejemplo.carmenuy.model.Nodo;
 import com.ejemplo.carmenuy.model.Detective;
+import com.ejemplo.carmenuy.model.Grafo;
+import com.ejemplo.carmenuy.model.Localidad;
+import com.ejemplo.carmenuy.model.Nodo;
+import com.ejemplo.carmenuy.model.Partida;
+import com.ejemplo.carmenuy.model.Rango;
+import com.ejemplo.carmenuy.model.Secuaz;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PartidaDAO {
-    private Connection connection;
-    private Grafo grafo;
+    private final Connection connection;
+    private final Grafo grafo;
 
     public PartidaDAO(Connection connection, Grafo grafo) {
         this.connection = connection;
@@ -39,9 +45,14 @@ public class PartidaDAO {
 
                 Nodo nodoDetective = grafo.getNodo(nodoDetectiveNombre);
                 Nodo nodoObjetivo = grafo.getNodo(nodoObjetivoNombre);
-                Detective detective = new Detective(detectiveNombre, "", Rango.DETECTIVE_JUNIOR); // Asumiendo que el apellido no es importante aquí
 
-                partida = new Partida(detective, nodoDetective, nodoObjetivo);
+                Localidad localidadDetective = new Localidad(nodoDetective.getNombre(), "Descripción", 0.0, 0.0); // Ajustar según sea necesario
+                Detective detective = new Detective(detectiveNombre, "", Rango.DETECTIVE_JUNIOR, localidadDetective);
+
+                // Lista de secuaces vacía por ahora
+                List<Secuaz> secuaces = new ArrayList<>();
+
+                partida = new Partida(detective, secuaces, grafo);
             }
         }
         return partida;

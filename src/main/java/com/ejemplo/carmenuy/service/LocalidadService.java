@@ -2,6 +2,7 @@ package com.ejemplo.carmenuy.service;
 
 import com.ejemplo.carmenuy.dao.LocalidadDAO;
 import com.ejemplo.carmenuy.model.Localidad;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 
 public class LocalidadService {
     private static final Logger LOGGER = Logger.getLogger(LocalidadService.class.getName());
-    private LocalidadDAO localidadDAO;
+    private final LocalidadDAO localidadDAO;
 
     public LocalidadService(LocalidadDAO localidadDAO) {
         this.localidadDAO = localidadDAO;
@@ -21,6 +22,7 @@ public class LocalidadService {
             LOGGER.info("Localidad agregada con éxito: " + localidad.getNombre());
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al agregar localidad: " + e.getMessage(), e);
+            throw new RuntimeException("Error al agregar localidad", e);
         }
     }
 
@@ -29,7 +31,7 @@ public class LocalidadService {
             return localidadDAO.obtenerTodasLasLocalidades();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al obtener localidades: " + e.getMessage(), e);
-            return null;
+            throw new RuntimeException("Error al obtener localidades", e);
         }
     }
 
@@ -39,6 +41,7 @@ public class LocalidadService {
             LOGGER.info("Localidad actualizada con éxito: " + localidad.getNombre());
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al actualizar localidad: " + e.getMessage(), e);
+            throw new RuntimeException("Error al actualizar localidad", e);
         }
     }
 
@@ -48,6 +51,7 @@ public class LocalidadService {
             LOGGER.info("Localidad eliminada con éxito: ID " + id);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al eliminar localidad: " + e.getMessage(), e);
+            throw new RuntimeException("Error al eliminar localidad", e);
         }
     }
 }

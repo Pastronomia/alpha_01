@@ -27,4 +27,15 @@ public class Grafo {
     public Nodo getNodoAleatorio() {
         return nodos.isEmpty() ? null : nodos.get((int) (Math.random() * nodos.size()));
     }
+
+    public boolean sonNodosAdyacentes(Nodo nodo1, Nodo nodo2) {
+        return nodo1.getConexiones().contains(nodo2);
+    }
+
+    public double calcularDistancia(Nodo nodo1, Nodo nodo2) {
+        // Implementación simplificada para calcular la distancia
+        double dx = nodo1.getX() - nodo2.getX();
+        double dy = nodo1.getY() - nodo2.getY();
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 }

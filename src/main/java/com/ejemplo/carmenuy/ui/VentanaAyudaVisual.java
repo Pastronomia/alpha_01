@@ -1,125 +1,53 @@
-// CarmenSandiegoUruguay/src/main/java/com/ejemplo/carmenuy/ui/VentanaAyudaVisual.java
-
 package com.ejemplo.carmenuy.ui;
-
-import com.ejemplo.carmenuy.service.UsuarioService;
-import com.ejemplo.carmenuy.tts.TTSManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.logging.Logger;
+import java.awt.event.ActionListener;
 
 /**
- * Ventana que pregunta al usuario si necesita ayuda visual para jugar.
+ * Clase que representa la ventana de ayuda visual en el juego Carmen Sandiego Uruguay.
  */
 public class VentanaAyudaVisual extends JFrame {
-    private static final Logger LOGGER = Logger.getLogger(VentanaAyudaVisual.class.getName());
+    private JTextArea textArea;
 
-    private final JButton btnSi;
-    private final JButton btnNo;
-    private final JLabel lblPregunta;
-    private final UsuarioService usuarioService;
-    private TTSManager ttsManager;
-
-    /**
-     * Constructor de la ventana de ayuda visual.
-     *
-     * @param usuarioService Servicio de usuario para manejar la lógica de negocio.
-     */
-    public VentanaAyudaVisual(UsuarioService usuarioService) {
-        this(usuarioService, new TTSManager());
-    }
-
-    /**
-     * Constructor de la ventana de ayuda visual con TTSManager inyectado.
-     *
-     * @param usuarioService Servicio de usuario para manejar la lógica de negocio.
-     * @param ttsManager Gestor de Text-to-Speech.
-     */
-    public VentanaAyudaVisual(UsuarioService usuarioService, TTSManager ttsManager) {
-        this.usuarioService = usuarioService;
-        this.ttsManager = ttsManager;
-
+    public VentanaAyudaVisual() {
         setTitle("Ayuda Visual");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        lblPregunta = new JLabel("¿Necesitas ayuda visual para jugar?", SwingConstants.CENTER);
-        lblPregunta.setFont(new Font("Arial", Font.BOLD, 16));
-        add(lblPregunta, BorderLayout.CENTER);
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
 
-        JPanel panelBotones = new JPanel(new FlowLayout());
-
-        btnSi = new JButton("Sí");
-        btnNo = new JButton("No");
-
-        panelBotones.add(btnSi);
-        panelBotones.add(btnNo);
-
-        add(panelBotones, BorderLayout.SOUTH);
-
-        btnSi.addActionListener(this::onSiButtonClicked);
-        btnNo.addActionListener(this::onNoButtonClicked);
-    }
-    public class VentanaAyudaVisual extends JFrame {
-
-
-        private void onSiButtonClicked(ActionEvent e) {
-            activarTTS();
-            mostrarVentanaLoginRegistro();
-        }
-
-        private void onNoButtonClicked(ActionEvent e) {
-            desactivarTTS();
-            mostrarVentanaLoginRegistro();
-        }
-
-        // Cambiado a public para testing
-        public void activarTTS() {
-            ttsManager.speak("TTS Activado");
-            LOGGER.info("TTS Activado");
-        }
-
-        // Cambiado a public para testing
-        public void desactivarTTS() {
-            ttsManager.shutdown();
-            LOGGER.info("TTS Desactivado");
-        }
-    }
-    public class VentanaAyudaVisual extends JFrame {
-
-
-        // Cambiado a protected para testing
-        protected void mostrarVentanaLoginRegistro() {
-            SwingUtilities.invokeLater(() -> {
-                VentanaLogin ventanaLogin = crearVentanaLogin();
-                ventanaLogin.setVisible(true);
+        JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 dispose();
-            });
-        }
+            }
+        });
 
-        // Método separado para facilitar el testing
-        protected VentanaLogin crearVentanaLogin() {
-            return new VentanaLogin(usuarioService);
-        }
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(btnCerrar);
+
+        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        getContentPane().add(panelBotones, BorderLayout.SOUTH);
     }
-    public class VentanaAyudaVisual extends JFrame {
 
+    public void mostrarMensaje(String mensaje) {
+        textArea.setText(mensaje);
+    }
 
-        // Setter para TTSManager, útil para testing
-        public void setTtsManager(TTSManager ttsManager) {
-            this.ttsManager = ttsManager;
-        }
-
-        /**
-         * Método principal para ejecutar la aplicación.
-         *
-         * @param args Argumentos de línea de comandos (no se utilizan).
-         */
-        public static void main(String[] args) {
-            SwingUtilities.invokeLater(() -> new VentanaAyudaVisual(null).setVisible(true));
-
-
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                VentanaAyudaVisual ventana = new VentanaAyudaVisual();
+                ventana.setVisible(true);
+                ventana.mostrarMensaje("Bienvenido a la ayuda visual del juego Carmen Sandiego Uruguay.");
+            }
+        });
+    }
+}

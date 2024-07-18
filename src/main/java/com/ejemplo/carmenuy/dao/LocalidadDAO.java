@@ -19,9 +19,9 @@ public class LocalidadDAO {
         String sql = "CREATE TABLE IF NOT EXISTS localidades (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "nombre TEXT NOT NULL, " +
-                "descripcion TEXT, " +
-                "latitud DOUBLE, " +
-                "longitud DOUBLE);";
+                "descripcion TEXT NOT NULL, " +
+                "latitud DOUBLE NOT NULL, " +
+                "longitud DOUBLE NOT NULL);";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.execute();
         }
@@ -35,6 +35,17 @@ public class LocalidadDAO {
             statement.setDouble(3, localidad.getLatitud());
             statement.setDouble(4, localidad.getLongitud());
             statement.executeUpdate();
+        }
+    }
+
+    public void insertarLocalidadesIniciales() throws SQLException {
+        List<Localidad> localidadesIniciales = List.of(
+                new Localidad("Montevideo", "Capital de Uruguay", -34.9011, -56.1645),
+                new Localidad("Punta del Este", "Famoso balneario", -34.9696, -54.9503)
+                // Agrega más localidades iniciales aquí
+        );
+        for (Localidad localidad : localidadesIniciales) {
+            insertarLocalidad(localidad);
         }
     }
 

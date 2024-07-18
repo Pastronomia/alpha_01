@@ -1,17 +1,13 @@
-// CarmenSandiegoUruguay/src/main/java/com/ejemplo/carmenuy/service/UsuarioService.java
-
 package com.ejemplo.carmenuy.service;
 
-import com.ejemplo.carmenuy.database.UsuarioDAO;
+import com.ejemplo.carmenuy.dao.UsuarioDAO;
 import com.ejemplo.carmenuy.model.Usuario;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class UsuarioService {
     private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
-
     private final UsuarioDAO usuarioDAO;
 
     public UsuarioService(Connection conexion) {

@@ -1,30 +1,28 @@
 package com.ejemplo.carmenuy;
 
-import com.ejemplo.carmenuy.manager.GitIgnoreManager;
+import com.ejemplo.carmenuy.ui.VentanaJuego;
+import com.ejemplo.carmenuy.service.JuegoService;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        GitIgnoreManager manager = new GitIgnoreManager();
-
-        // Imprimir archivos ignorados
-        System.out.println("Archivos ignorados por Git:");
-        manager.printIgnoredFiles();
-
-        // Verificar si un archivo debe ser ignorado
-        String fileName = "example.class";
-        boolean isIgnored = manager.isIgnored(fileName);
-        System.out.println("¿Debe ser ignorado '" + fileName + "'? " + isIgnored);
-
-        // Agregar un nuevo patrón
-        String newPattern = "*.example";
-        manager.addIgnorePattern(newPattern);
-        System.out.println("Nuevo patrón agregado: " + newPattern);
-        manager.printIgnoredFiles();
-
-        // Eliminar un patrón
-        manager.removeIgnorePattern(newPattern);
-        System.out.println("Patrón eliminado: " + newPattern);
-        manager.printIgnoredFiles();
+        SwingUtilities.invokeLater(() -> {
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+                JuegoService juegoService = new JuegoService(connection);
+                VentanaJuego ventana = new VentanaJuego(juegoService);
+                ventana.setVisible(true);
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Error al iniciar el juego", e);
+            }
+        });
     }
 }

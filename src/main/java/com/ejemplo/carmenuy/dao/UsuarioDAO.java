@@ -1,62 +1,95 @@
 package com.ejemplo.carmenuy.dao;
 
-import com.ejemplo.carmenuy.database.DatabaseInitialization;
+import com.ejemplo.carmenuy.model.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * DAO para manejar las operaciones de la base de datos relacionadas con los detectives.
+ * Clase de acceso a datos para los usuarios.
  */
-public class DetectiveDAO {
-    private static final Logger logger = Logger.getLogger(DetectiveDAO.class.getName());
-    private Connection connection;
+public class UsuarioDAO {
+    private final Connection conexion;
 
-    /**
-     * Constructor del DAO de detectives. Utiliza la conexión centralizada desde DatabaseInitialization.
-     */
-    public DetectiveDAO() {
-        this.connection = DatabaseInitialization.getConnection();
+    public UsuarioDAO(Connection conexion) {
+        this.conexion = conexion;
     }
 
     /**
-     * Actualiza el rango de los detectives basado en el número de capturas.
+     * Obtiene un usuario por su nombre.
+     * @param nombre el nombre del usuario a buscar.
+     * @return Usuario encontrado o null si no existe.
+     * @throws SQLException si ocurre un error al acceder a la base de datos.
      */
-    public void actualizarRangoDetective() {
-        String sql = "UPDATE detectives SET rango = CASE " +
-                "WHEN capturas >= 4 THEN 'INSPECTOR' " +
-                "WHEN capturas >= 3 THEN 'DETECTIVE JEFE' " +
-                "WHEN capturas >= 2 THEN 'DETECTIVE EFICIENTE' " +
-                "WHEN capturas >= 1 THEN 'DETECTIVE APRENDIZ' " +
-                "ELSE 'DETECTIVE JUNIOR' END";
+    public Usuario obtenerUsuarioPorNombre(String nombre) throws SQLException {
+        String sql = "SELECT * FROM usuarios WHERE nombre = ?";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, nombre);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("apellido"),
+                            rs.getString("contrasena"),
+                            rs.getString("rango"),
+                            rs.getInt("capturas"),
+                            rs.getString("progreso")
+                    );
+                }
+            }
+        }
+        return null;
+    }
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error al actualizar los rangos de los detectives: " + e.getMessage(), e);
+    /**
+     * Inserta un nuevo usuario en la base de datos.
+     * @param usuario el usuario a insertar.
+     * @throws SQLException si ocurre un error al acceder a la base de datos.
+     */
+    public void insertarUsuario(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuarios (nombre, apellido, contrasena, rango, capturas, progreso) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, usuario.nombre());
+            statement.setString(2, usuario.apellido());
+            statement.setString(3, usuario.contrasena());
+            statement.setString(4, usuario.rango());
+            statement.setInt(5, usuario.capturas());
+            statement.setString(6, usuario.progreso());
+            statement.executeUpdate();
         }
     }
 
     /**
-     * Método adicional para manejar otros CRUD o operaciones específicas de detectives...
+     * Actualiza los datos de un usuario existente.
+     * @param usuario el usuario a actualizar.
+     * @throws SQLException si ocurre un error al acceder a la base de datos.
      */
+    public void actualizarUsuario(Usuario usuario) throws SQLException {
+        String sql = "UPDATE usuarios SET nombre = ?, apellido = ?, contrasena = ?, rango = ?, capturas = ?, progreso = ? WHERE id = ?";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, usuario.nombre());
+            statement.setString(2, usuario.apellido());
+            statement.setString(3, usuario.contrasena());
+            statement.setString(4, usuario.rango());
+            statement.setInt(5, usuario.capturas());
+            statement.setString(6, usuario.progreso());
+            statement.setInt(7, usuario.id());
+            statement.executeUpdate();
+        }
+    }
 
     /**
-     * Cierra los recursos de forma segura.
-     *
-     * @param recursos Los recursos a cerrar.
+     * Elimina un usuario de la base de datos por su ID.
+     * @param id el ID del usuario a eliminar.
+     * @throws SQLException si ocurre un error al acceder a la base de datos.
      */
-    private void cerrarRecursos(AutoCloseable... recursos) {
-        for (AutoCloseable recurso : recursos) {
-            if (recurso != null) {
-                try {
-                    recurso.close();
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "Error al cerrar recurso", e);
-                }
-            }
+    public void eliminarUsuario(int id) throws SQLException {
+        String sql = "DELETE FROM usuarios WHERE id = ?";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
         }
     }
 }

@@ -1,54 +1,57 @@
 package com.ejemplo.carmenuy.model;
 
-import java.util.Objects;
-
+/**
+ * Clase que representa una pista en el juego Carmen Sandiego Uruguay.
+ */
 public class Pista {
     private int id;
     private String texto;
-    private boolean esCorrecta;
+    private int localidadId;
 
-    public Pista(int id, String texto, boolean esCorrecta) {
-        if (texto == null || texto.isEmpty()) {
-            throw new IllegalArgumentException("El texto no puede ser nulo o vacío");
-        }
+    /**
+     * Constructor completo de la clase Pista.
+     * @param id el identificador único de la pista.
+     * @param texto el contenido de la pista.
+     * @param localidadId el identificador de la localidad asociada a la pista.
+     */
+    public Pista(int id, String texto, int localidadId) {
         this.id = id;
         this.texto = texto;
-        this.esCorrecta = esCorrecta;
+        this.localidadId = localidadId;
     }
 
+    /**
+     * Constructor para crear una pista sin un ID especificado, útil para cuando se crea una nueva pista que aún no ha sido guardada en la base de datos.
+     * @param texto el contenido de la pista.
+     * @param localidadId el identificador de la localidad asociada a la pista.
+     */
+    public Pista(String texto, int localidadId) {
+        this.texto = texto;
+        this.localidadId = localidadId;
+    }
+
+    // Getters y setters
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTexto() {
         return texto;
     }
 
-    public boolean isEsCorrecta() {
-        return esCorrecta;
+    public void setTexto(String texto) {
+        this.texto = texto;
     }
 
-    @Override
-    public String toString() {
-        return "Pista{" +
-                "id=" + id +
-                ", texto='" + texto + '\'' +
-                ", esCorrecta=" + esCorrecta +
-                '}';
+    public int getLocalidadId() {
+        return localidadId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pista pista = (Pista) o;
-        return id == pista.id &&
-                esCorrecta == pista.esCorrecta &&
-                texto.equals(pista.texto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, texto, esCorrecta);
+    public void setLocalidadId(int localidadId) {
+        this.localidadId = localidadId;
     }
 }

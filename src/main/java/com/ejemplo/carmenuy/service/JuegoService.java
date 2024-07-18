@@ -1,12 +1,20 @@
 package com.ejemplo.carmenuy.service;
 
-import com.ejemplo.carmenuy.model.*;
-import com.ejemplo.carmenuy.dao.*;
+import com.ejemplo.carmenuy.dao.LocalidadDAO;
+import com.ejemplo.carmenuy.dao.PartidaDAO;
+import com.ejemplo.carmenuy.dao.PistaDAO;
+import com.ejemplo.carmenuy.model.Detective;
+import com.ejemplo.carmenuy.model.Grafo;
+import com.ejemplo.carmenuy.model.Localidad;
+import com.ejemplo.carmenuy.model.Nodo;
+import com.ejemplo.carmenuy.model.Rango;
+import com.ejemplo.carmenuy.model.Secuaz;
 import com.ejemplo.carmenuy.tts.TTSManager;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +37,7 @@ public class JuegoService {
     private final MisionManager misionManager;
     private Secuaz carmenSandiego;
 
-    public JuegoService(Connection connection) {
+    public JuegoService(Connection connection) throws SQLException {
         this.grafo = new Grafo();
         this.localidadDAO = new LocalidadDAO(connection);
         this.pistaDAO = new PistaDAO(connection);
@@ -38,24 +46,16 @@ public class JuegoService {
         this.ttsManager = new TTSManager();
         this.accesibilidadManager = new AccesibilidadManager(ttsManager);
         this.misionManager = new MisionManager(connection);
-        try {
-            inicializarJuego();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error inicializando el juego: " + e.getMessage(), e);
-        }
+        inicializarJuego();
     }
 
     private void inicializarJuego() throws SQLException {
         accesibilidadManager.preguntarPreferenciaAudio();
-        try {
-            crearTablas();
-            if (localidadDAO.obtenerTodasLasLocalidades().isEmpty()) {
-                insertarDatosIniciales();
-            }
-            inicializarPersonajes();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQL Error while initializing game components: " + e.getMessage(), e);
+        crearTablas();
+        if (localidadDAO.obtenerTodasLasLocalidades().isEmpty()) {
+            insertarDatosIniciales();
         }
+        inicializarPersonajes();
     }
 
     private void crearTablas() throws SQLException {
@@ -70,7 +70,7 @@ public class JuegoService {
     }
 
     private void inicializarPersonajes() {
-        this.detective = new Detective("Detective", "Apellido", Rango.DETECTIVE_JUNIOR);
+        this.detective = new Detective("Detective", "Apellido", Rango.DETECTIVE_JUNIOR, new Localidad("Montevideo", "Capital de Uruguay", -34.9011, -56.1645));
         this.secuaces = new ArrayList<>();
         inicializarSecuaces();
         inicializarLocalidadAleatoria();
@@ -89,9 +89,29 @@ public class JuegoService {
     }
 
     private void inicializarLocalidadAleatoria() {
-        List<String> todasLasLocalidades = localidadDAO.obtenerTodasLasLocalidades();
-        String localidadInicial = todasLasLocalidades.get(RANDOM.nextInt(todasLasLocalidades.size()));
-        this.nodoActual = grafo.getNodo(localidadInicial);
-        this.localidadActual = new Localidad(localidadInicial, "Descripción de " + localidadInicial);
+        try {
+            List<Localidad> todasLasLocalidades = localidadDAO.obtenerTodasLasLocalidades();
+            Localidad localidadInicial = todasLasLocalidades.get(RANDOM.nextInt(todasLasLocalidades.size()));
+            this.nodoActual = grafo.getNodo(localidadInicial.getNombre());
+            this.localidadActual = localidadInicial;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al inicializar la localidad aleatoria", e);
+        }
+    }
+
+    public String obtenerPista() {
+        return "Esta es una pista de ejemplo.";
+    }
+
+    public void responderNo() {
+        // Implementación para responder No a una pregunta
+    }
+
+    public void responderSi() {
+        // Implementación para responder Sí a una pregunta
+    }
+
+    public String obtenerNarrativaLocalidad() {
+        return narrativaManager.generarNarrativa(localidadActual);
     }
 }

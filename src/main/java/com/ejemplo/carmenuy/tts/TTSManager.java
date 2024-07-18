@@ -1,5 +1,3 @@
-// CarmenSandiegoUruguay/src/main/java/com/ejemplo/carmenuy/tts/TTSManager.java
-
 package com.ejemplo.carmenuy.tts;
 
 import javax.speech.Central;
@@ -7,8 +5,8 @@ import javax.speech.EngineException;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 import java.util.Locale;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -66,8 +64,7 @@ public class TTSManager implements ITTSManager {
             logger.log(Level.WARNING, "Error al sintetizar el texto", e);
         }
     }
-}
-public class TTSManager {
+
     @Override
     public CompletableFuture<Void> speakAsync(String text) {
         return CompletableFuture.runAsync(() -> speak(text));
@@ -95,52 +92,7 @@ public class TTSManager {
             logger.log(Level.WARNING, "Error al cerrar el sintetizador", e);
         }
     }
-}
-// CarmenSandiegoUruguay/src/main/java/com/ejemplo/carmenuy/tts/ITTSManager.java
 
-package com.ejemplo.carmenuy.tts;
-
-import java.util.concurrent.CompletableFuture;
-
-/**
- * Interfaz que define los métodos para el gestor de síntesis de texto a voz (TTS).
- */
-public interface ITTSManager {
-    /**
-     * Sintetiza el texto proporcionado en voz.
-     *
-     * @param text El texto a sintetizar.
-     */
-    void speak(String text);
-
-    /**
-     * Sintetiza el texto proporcionado en voz de forma asíncrona.
-     *
-     * @param text El texto a sintetizar.
-     * @return Un CompletableFuture que se completa cuando la síntesis de texto a voz finaliza.
-     */
-    CompletableFuture<Void> speakAsync(String text);
-
-    /**
-     * Establece el volumen de la voz del sintetizador.
-     *
-     * @param volume El volumen deseado.
-     */
-    void setVolume(float volume);
-
-    /**
-     * Establece la velocidad de la voz del sintetizador.
-     *
-     * @param speed La velocidad deseada.
-     */
-    void setSpeed(float speed);
-
-    /**
-     * Cierra el sintetizador de voz y libera los recursos.
-     */
-    void shutdown();
-}
-public class TTSManager {
     /**
      * Método principal para pruebas y demostración del TTS.
      */

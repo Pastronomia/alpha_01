@@ -1,11 +1,17 @@
 package com.ejemplo.carmenuy.service;
 
-import com.ejemplo.carmenuy.model.*;
-import com.ejemplo.carmenuy.dao.*;
+import com.ejemplo.carmenuy.dao.MisionDAO;
+import com.ejemplo.carmenuy.dao.LocalidadDAO;
+import com.ejemplo.carmenuy.model.Mision;
+import com.ejemplo.carmenuy.model.Secuaz;
+import com.ejemplo.carmenuy.model.Detective;
+import com.ejemplo.carmenuy.model.Localidad;
+import com.ejemplo.carmenuy.model.Rango;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MisionManager {
@@ -37,44 +43,35 @@ public class MisionManager {
 
     private Detective inicializarDetective() {
         if (localidades.isEmpty()) {
-            throw new IllegalStateException("No hay localidades disponibles para inicializar el detective");
+            throw new IllegalStateException("No hay localidades disponibles para inicializar al detective");
         }
-        Random random = new Random();
-        Localidad localidadInicial = localidades.get(random.nextInt(localidades.size()));
+        var random = new Random();
+        var localidadInicial = localidades.get(random.nextInt(localidades.size()));
         return new Detective("Detective", "Apellido", Rango.DETECTIVE_JUNIOR, localidadInicial);
     }
 
     private List<Secuaz> inicializarSecuaces() {
-        List<Secuaz> secuaces = new ArrayList<>();
+        var secuaces = new ArrayList<Secuaz>();
         secuaces.add(new Secuaz("Betosecreto", "Escalador, experto en artes ninja y espionaje", 5));
         secuaces.add(new Secuaz("Ellabella", "Experta en estafas", 4));
         secuaces.add(new Secuaz("Mindy Ana Son", "Arqueóloga experta en gemas", 3));
         secuaces.add(new Secuaz("Moonabomber", "Experto en explosivos", 5));
-        for (Secuaz secuaz : secuaces) {
+        for (var secuaz : secuaces) {
             secuaz.setLocalidad(localidades.get(new Random().nextInt(localidades.size())));
         }
         return secuaces;
     }
 
     private Secuaz inicializarCarmenSandiego() {
-        Secuaz carmenSandiego = new Secuaz("Carmen Sandiego", "Líder criminal", 10);
+        var carmenSandiego = new Secuaz("Carmen Sandiego", "Líder criminal", 10);
         carmenSandiego.setLocalidad(localidades.get(new Random().nextInt(localidades.size())));
         return carmenSandiego;
     }
 
-    public void jugar() {
-        while (!juegoTerminado) {
-            // Implementar la lógica del juego aquí
-            // Ejemplo: verificar si se captura a Carmen Sandiego o se complete una misión
-            System.out.println("Jugando...");
-        }
-    }
-
-    // Otros métodos necesarios para el funcionamiento completo del MisionManager
     public void iniciarNuevaMision() throws SQLException {
-        List<Mision> misiones = misionDAO.obtenerTodasLasMisiones();
+        var misiones = misionDAO.obtenerTodasLasMisiones();
         if (!misiones.isEmpty()) {
-            Random random = new Random();
+            var random = new Random();
             misionActual = misiones.get(random.nextInt(misiones.size()));
         } else {
             throw new IllegalStateException("No hay misiones disponibles");
