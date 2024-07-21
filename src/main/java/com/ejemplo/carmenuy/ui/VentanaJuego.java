@@ -1,20 +1,22 @@
 package com.ejemplo.carmenuy.ui;
 
 import com.ejemplo.carmenuy.service.JuegoService;
+import com.ejemplo.carmenuy.model.Pista;
+import com.ejemplo.carmenuy.model.Localidad;
+import com.ejemplo.carmenuy.dao.PistaDAO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
-/**
- * Clase que representa la ventana principal del juego Carmen Sandiego Uruguay.
- */
 public class VentanaJuego extends JFrame {
     private final JuegoService juegoService;
     private final JTextArea textArea;
+    private List<Pista> pistasActuales;
 
     public VentanaJuego(JuegoService juegoService) {
         this.juegoService = juegoService;
@@ -28,9 +30,7 @@ public class VentanaJuego extends JFrame {
         JScrollPane scrollPane = new JScrollPane(textArea);
 
         getContentPane().add(scrollPane, BorderLayout.CENTER);
-
         configurarAccionesBotones();
-        configurarAtajosTeclado();
         actualizarInterfaz();
     }
 
@@ -40,57 +40,66 @@ public class VentanaJuego extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_H:
-                        // Acción para la tecla H (por ejemplo, obtener pista)
-                        obtenerPista();
+                        if (pistasActuales != null && !pistasActuales.isEmpty()) {
+                            juegoService.manejarSeleccionPista(pistasActuales.get(0));
+                        }
                         break;
                     case KeyEvent.VK_J:
-                        // Acción para la tecla J (por ejemplo, responder No a una pregunta)
-                        responderNo();
+                        if (pistasActuales != null && pistasActuales.size() > 1) {
+                            juegoService.manejarSeleccionPista(pistasActuales.get(1));
+                        }
                         break;
                     case KeyEvent.VK_K:
-                        // Acción para la tecla K (por ejemplo, responder Sí a una pregunta)
-                        responderSi();
+                        if (pistasActuales != null && pistasActuales.size() > 2) {
+                            juegoService.manejarSeleccionPista(pistasActuales.get(2));
+                        }
+                        break;
+                    case KeyEvent.VK_ESCAPE:
+                        solicitarSalida();
                         break;
                 }
             }
         });
     }
 
-    private void configurarAtajosTeclado() {
-        // Implementar los atajos de teclado aquí, en este caso, los manejamos en configurarAccionesBotones
+    private void obtenerPistas() {
+        Localidad localidadActual = juegoService.obtenerLocalidadActual();
+        pistasActuales = juegoService.obtenerTresPistasAlAzar(localidadActual);
+        mostrarPistas(pistasActuales);
     }
 
-    private void obtenerPista() {
-        // Implementación para obtener una pista
-        String pista = juegoService.obtenerPista();
-        textArea.setText(pista);
+    private void mostrarPistas(List<Pista> pistas) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < pistas.size(); i++) {
+            sb.append((i == 0 ? "H" : i == 1 ? "J" : "K")).append(": ").append(pistas.get(i).getDescripcion()).append("\n");
+        }
+        textArea.setText(sb.toString());
     }
 
-    private void responderNo() {
-        // Implementación para responder No a una pregunta
-        juegoService.responderNo();
-        actualizarInterfaz();
-    }
-
-    private void responderSi() {
-        // Implementación para responder Sí a una pregunta
-        juegoService.responderSi();
-        actualizarInterfaz();
+    private void solicitarSalida() {
+        // Lógica para solicitar salida del juego
+        int opcion = JOptionPane.showConfirmDialog(this, "¿Deseas salir del juego?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }
 
     private void actualizarInterfaz() {
-        textArea.setText(juegoService.obtenerNarrativaLocalidad());
+        obtenerPistas();
+        // Otras actualizaciones de interfaz
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db"); // Inicializar la conexión correctamente
-                JuegoService juegoService = new JuegoService(connection);
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+                PistaDAO pistaDAO = new PistaDAO(connection);
+                JuegoService juegoService = new JuegoService(pistaDAO);
                 VentanaJuego ventana = new VentanaJuego(juegoService);
                 ventana.setVisible(true);
             } catch (SQLException e) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al conectar con la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

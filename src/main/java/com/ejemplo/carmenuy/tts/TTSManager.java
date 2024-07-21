@@ -17,6 +17,7 @@ public class TTSManager implements ITTSManager {
     private Synthesizer synthesizer;
     private final Locale locale;
     private final String voiceName;
+    private float volume;
 
     /**
      * Constructor por defecto que inicializa el sintetizador con configuración regional española (Uruguay) y una voz predeterminada.
@@ -34,6 +35,7 @@ public class TTSManager implements ITTSManager {
     public TTSManager(Locale locale, String voiceName) {
         this.locale = locale;
         this.voiceName = voiceName;
+        this.volume = 1.0f; // Volumen inicial
         initializeSynthesizer();
     }
 
@@ -72,8 +74,14 @@ public class TTSManager implements ITTSManager {
 
     @Override
     public void setVolume(float volume) {
+        this.volume = volume;
         // La implementación depende de la biblioteca TTS específica
         // Ejemplo: synthesizer.getSynthesizerProperties().setVolume(volume);
+    }
+
+    @Override
+    public float getVolume() {
+        return this.volume;
     }
 
     @Override

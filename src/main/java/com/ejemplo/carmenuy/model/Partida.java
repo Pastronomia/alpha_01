@@ -2,6 +2,8 @@ package com.ejemplo.carmenuy.model;
 
 import java.util.List;
 
+
+
 /**
  * Clase que representa una partida en el juego Carmen Sandiego Uruguay.
  */

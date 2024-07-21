@@ -29,6 +29,13 @@ public interface ITTSManager {
     void setVolume(float volume);
 
     /**
+     * Obtiene el volumen actual de la voz del sintetizador.
+     *
+     * @return El volumen actual.
+     */
+    float getVolume();
+
+    /**
      * Establece la velocidad de la voz del sintetizador.
      *
      * @param speed La velocidad deseada.

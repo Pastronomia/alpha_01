@@ -9,8 +9,9 @@ public class Secuaz {
     private String nombre;
     private String habilidad;
     private int peligrosidad;
-    private Nodo nodo;  // Usando la clase Nodo definida anteriormente
+    private Localidad localidad;  // Agregado para la localidad del secuaz
     private boolean capturado; // Agregado para manejar la captura del secuaz
+    private Nodo nodo;  // Usando la clase Nodo definida anteriormente
 
     /**
      * Constructor para crear un secuaz.
@@ -24,6 +25,7 @@ public class Secuaz {
         this.habilidad = Objects.requireNonNull(habilidad, "La habilidad no puede ser nula");
         this.peligrosidad = peligrosidad;
         this.capturado = false; // Inicialmente no está capturado
+        this.nodo = null; // Inicializa el nodo como null
         validarPeligrosidad();
     }
 
@@ -70,12 +72,12 @@ public class Secuaz {
         this.peligrosidad = peligrosidad;
     }
 
-    public Nodo getNodo() {
-        return nodo;
+    public Localidad getLocalidad() {
+        return localidad;
     }
 
-    public void setNodo(Nodo nodo) {
-        this.nodo = nodo;
+    public void setLocalidad(Localidad localidad) {
+        this.localidad = localidad;
     }
 
     public boolean isCapturado() {
@@ -86,10 +88,18 @@ public class Secuaz {
         this.capturado = capturado;
     }
 
+    public Nodo getNodo() {
+        return nodo;
+    }
+
+    public void setNodo(Nodo nodo) {
+        this.nodo = nodo;
+    }
+
     @Override
     public String toString() {
-        return String.format("Secuaz{nombre='%s', habilidad='%s', peligrosidad=%d, nodo=%s, capturado=%b}",
-                nombre, habilidad, peligrosidad, nodo != null ? nodo.getNombre() : "Sin nodo", capturado);
+        return String.format("Secuaz{nombre='%s', habilidad='%s', peligrosidad=%d, localidad=%s, capturado=%b, nodo=%s}",
+                nombre, habilidad, peligrosidad, localidad != null ? localidad.getNombre() : "Sin localidad", capturado, nodo != null ? nodo.getNombre() : "Sin nodo");
     }
 
     @Override
@@ -101,11 +111,12 @@ public class Secuaz {
                 capturado == secuaz.capturado &&
                 Objects.equals(nombre, secuaz.nombre) &&
                 Objects.equals(habilidad, secuaz.habilidad) &&
+                Objects.equals(localidad, secuaz.localidad) &&
                 Objects.equals(nodo, secuaz.nodo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nombre, habilidad, peligrosidad, nodo, capturado);
+        return Objects.hash(nombre, habilidad, peligrosidad, localidad, capturado, nodo);
     }
 }

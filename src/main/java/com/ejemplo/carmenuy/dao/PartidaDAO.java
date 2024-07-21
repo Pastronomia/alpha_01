@@ -43,8 +43,8 @@ public class PartidaDAO {
                 String nodoDetectiveNombre = resultSet.getString("nodo_detective");
                 String nodoObjetivoNombre = resultSet.getString("nodo_objetivo");
 
-                Nodo nodoDetective = grafo.getNodo(nodoDetectiveNombre);
-                Nodo nodoObjetivo = grafo.getNodo(nodoObjetivoNombre);
+                Nodo nodoDetective = grafo.obtenerNodo(nodoDetectiveNombre);
+                Nodo nodoObjetivo = grafo.obtenerNodo(nodoObjetivoNombre);
 
                 Localidad localidadDetective = new Localidad(nodoDetective.getNombre(), "Descripción", 0.0, 0.0); // Ajustar según sea necesario
                 Detective detective = new Detective(detectiveNombre, "", Rango.DETECTIVE_JUNIOR, localidadDetective);

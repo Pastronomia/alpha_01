@@ -38,12 +38,12 @@ public class BaseDeDatosManager {
     public void insertarUsuario(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuarios (nombre, apellido, contrasena, rango, capturas, progreso) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, usuario.nombre());
-            statement.setString(2, usuario.apellido());
-            statement.setString(3, usuario.contrasena());
-            statement.setString(4, usuario.rango());
-            statement.setInt(5, usuario.capturas());
-            statement.setString(6, usuario.progreso());
+            statement.setString(1, usuario.getNombre());
+            statement.setString(2, usuario.getApellido());
+            statement.setString(3, usuario.getContrasena());
+            statement.setString(4, usuario.getRango());
+            statement.setInt(5, usuario.getCapturas());
+            statement.setString(6, usuario.getProgreso());
             statement.executeUpdate();
         }
     }
@@ -71,13 +71,13 @@ public class BaseDeDatosManager {
     public void actualizarUsuario(Usuario usuario) throws SQLException {
         String sql = "UPDATE usuarios SET nombre = ?, apellido = ?, contrasena = ?, rango = ?, capturas = ?, progreso = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, usuario.nombre());
-            statement.setString(2, usuario.apellido());
-            statement.setString(3, usuario.contrasena());
-            statement.setString(4, usuario.rango());
-            statement.setInt(5, usuario.capturas());
-            statement.setString(6, usuario.progreso());
-            statement.setInt(7, usuario.id());
+            statement.setString(1, usuario.getNombre());
+            statement.setString(2, usuario.getApellido());
+            statement.setString(3, usuario.getContrasena());
+            statement.setString(4, usuario.getRango());
+            statement.setInt(5, usuario.getCapturas());
+            statement.setString(6, usuario.getProgreso());
+            statement.setInt(7, usuario.getId());
             statement.executeUpdate();
         }
     }

@@ -1,16 +1,12 @@
-// CarmenSandiegoUruguay/src/test/java/com/ejemplo/carmenuy/dao/UsuarioDAOTest.java
-
 package com.ejemplo.carmenuy.dao;
 
 import com.ejemplo.carmenuy.model.Usuario;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 import static org.junit.Assert.*;
 
 public class UsuarioDAOTest {
@@ -45,9 +41,6 @@ public class UsuarioDAOTest {
             stmt.execute(sql);
         }
     }
-}
-public class UsuarioDAOTest {
-
 
     @Test
     public void testInsertarUsuario() throws SQLException {
@@ -64,9 +57,6 @@ public class UsuarioDAOTest {
         Usuario usuarioObtenido = usuarioDAO.obtenerUsuarioPorNombreYContrasena("NoExiste", "password");
         assertNull("El usuario debería ser null para un nombre inexistente", usuarioObtenido);
     }
-}
-public class UsuarioDAOTest {
-
 
     @Test
     public void testActualizarUsuario() throws SQLException {
@@ -87,9 +77,6 @@ public class UsuarioDAOTest {
         Usuario usuarioEliminado = usuarioDAO.obtenerUsuarioPorNombreYContrasena("DeleteMe", "password");
         assertNull("El usuario eliminado debería ser null", usuarioEliminado);
     }
-}
-public class UsuarioDAOTest {
-    // ... Código anterior ...
 
     @Test(expected = SQLException.class)
     public void testInsertarUsuarioDuplicado() throws SQLException {

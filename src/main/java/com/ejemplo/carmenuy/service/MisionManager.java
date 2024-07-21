@@ -1,17 +1,17 @@
 package com.ejemplo.carmenuy.service;
 
-import com.ejemplo.carmenuy.dao.MisionDAO;
 import com.ejemplo.carmenuy.dao.LocalidadDAO;
-import com.ejemplo.carmenuy.model.Mision;
-import com.ejemplo.carmenuy.model.Secuaz;
+import com.ejemplo.carmenuy.dao.MisionDAO;
 import com.ejemplo.carmenuy.model.Detective;
 import com.ejemplo.carmenuy.model.Localidad;
+import com.ejemplo.carmenuy.model.Mision;
 import com.ejemplo.carmenuy.model.Rango;
+import com.ejemplo.carmenuy.model.Secuaz;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MisionManager {
