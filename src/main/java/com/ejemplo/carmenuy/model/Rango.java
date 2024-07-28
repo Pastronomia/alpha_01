@@ -3,7 +3,7 @@ package com.ejemplo.carmenuy.model;
 public enum Rango {
     DETECTIVE_JUNIOR("Detective Junior"),
     DETECTIVE_APRENDIZ("Detective Aprendiz"),
-    DETECTIVE_SENIOR("Detective Senior"),  // Cambiado de EFICIENTE a SENIOR
+    DETECTIVE_EFICIENTE("Detective Eficiente"),
     DETECTIVE_JEFE("Detective Jefe"),
     INSPECTOR("Inspector");
 

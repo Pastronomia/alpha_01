@@ -1,3 +1,4 @@
+// MisionDAO.java
 package com.ejemplo.carmenuy.dao;
 
 import com.ejemplo.carmenuy.model.Mision;
@@ -20,10 +21,10 @@ public class MisionDAO {
         String sql = """
                 CREATE TABLE IF NOT EXISTS Misiones (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    titulo TEXT NOT NULL,
+                    titulo TEXT NOT NULL UNIQUE,
                     descripcion TEXT,
-                    objetivo TEXT,
-                    completada BOOLEAN
+                    objetivo TEXT NOT NULL UNIQUE,
+                    completada BOOLEAN NOT NULL DEFAULT FALSE
                 )""";
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
@@ -37,14 +38,18 @@ public class MisionDAO {
         if (!validarMision(mision)) {
             return;
         }
-        String sql = "INSERT INTO Misiones (titulo, descripcion, objetivo, completada) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Misiones (titulo, descripcion, objetivo, completada) VALUES (?, ?, ?, ?) ON CONFLICT(titulo, objetivo) DO NOTHING";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, mision.getTitulo());
             pstmt.setString(2, mision.getDescripcion());
             pstmt.setString(3, mision.getObjetivo());
             pstmt.setBoolean(4, mision.isCompletada());
-            pstmt.executeUpdate();
-            logger.info("Misión insertada exitosamente.");
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                logger.info("Misión insertada exitosamente.");
+            } else {
+                logger.info("Misión con título u objetivo duplicado no fue insertada.");
+            }
         } catch (SQLException e) {
             logger.error("Error al insertar misión: ", e);
         }
@@ -85,23 +90,23 @@ public class MisionDAO {
             return;
         }
         String sql = "UPDATE Misiones SET titulo = ?, descripcion = ?, objetivo = ?, completada = ? WHERE id = ?";
-        try {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
-            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                pstmt.setString(1, mision.getTitulo());
-                pstmt.setString(2, mision.getDescripcion());
-                pstmt.setString(3, mision.getObjetivo());
-                pstmt.setBoolean(4, mision.isCompletada());
-                pstmt.setInt(5, mision.getId());
-                pstmt.executeUpdate();
-                connection.commit();
-                logger.info("Misión actualizada exitosamente.");
-            } catch (SQLException e) {
+            pstmt.setString(1, mision.getTitulo());
+            pstmt.setString(2, mision.getDescripcion());
+            pstmt.setString(3, mision.getObjetivo());
+            pstmt.setBoolean(4, mision.isCompletada());
+            pstmt.setInt(5, mision.getId());
+            pstmt.executeUpdate();
+            connection.commit();
+            logger.info("Misión actualizada exitosamente.");
+        } catch (SQLException e) {
+            try {
                 connection.rollback();
                 logger.error("Error al actualizar misión, se hizo rollback.", e);
+            } catch (SQLException ex) {
+                logger.error("Error al realizar rollback", ex);
             }
-        } catch (SQLException e) {
-            logger.error("Error al manejar la transacción", e);
         } finally {
             try {
                 connection.setAutoCommit(true);

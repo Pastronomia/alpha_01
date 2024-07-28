@@ -30,18 +30,19 @@ class PistaServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         pistaService = new PistaService(mockConnection);
+        pistaService.setPistaDAO(mockPistaDAO); // Aseguramos que el mockPistaDAO se use en el servicio
     }
 
     @Test
     void testInsertarPista() throws SQLException, PistaException {
-        Pista pista = new Pista("A", "1.1", "Esta es una pista", false);
+        Pista pista = new Pista(1, 1, "1.1", "Esta es una pista", false); // Corregido con tipos de datos correctos
         pistaService.insertarPista(pista);
         verify(mockPistaDAO).insertarPista(pista);
     }
 
     @Test
     void testObtenerPistaPorId() throws SQLException, PistaException {
-        Pista pistaEsperada = new Pista(1, "A", "1.1", "Esta es una pista", false);
+        Pista pistaEsperada = new Pista(1, 1, "1.1", "Esta es una pista", false); // Corregido con tipos de datos correctos
         when(mockPistaDAO.obtenerPistaPorId(1)).thenReturn(pistaEsperada);
         Pista pistaObtenida = pistaService.obtenerPistaPorId(1);
         assertEquals(pistaEsperada, pistaObtenida);
@@ -56,8 +57,8 @@ class PistaServiceTest {
     @Test
     void testObtenerTodasLasPistas() throws SQLException, PistaException {
         List<Pista> pistasMock = Arrays.asList(
-                new Pista(1, "A", "1.1", "Pista 1", false),
-                new Pista(2, "B", "2.1", "Pista 2", false)
+                new Pista(1, 1, "1.1", "Pista 1", false), // Corregido con tipos de datos correctos
+                new Pista(2, 2, "2.1", "Pista 2", false)  // Corregido con tipos de datos correctos
         );
         when(mockPistaDAO.obtenerTodasLasPistas()).thenReturn(pistasMock);
 
@@ -68,7 +69,7 @@ class PistaServiceTest {
 
     @Test
     void testActualizarPista() throws SQLException, PistaException {
-        Pista pista = new Pista(1, "A", "1.1", "Pista actualizada", false);
+        Pista pista = new Pista(1, 1, "1.1", "Pista actualizada", false); // Corregido con tipos de datos correctos
         pistaService.actualizarPista(pista);
         verify(mockPistaDAO).actualizarPista(pista);
     }
@@ -87,8 +88,13 @@ class PistaServiceTest {
 
     @Test
     void testManejoDeExcepcionesEnInsertarPista() {
-        Pista pista = new Pista(1, "A", "1.1", "Pista de prueba", false);
-        doThrow(new SQLException("Error de prueba")).when(mockPistaDAO).insertarPista(any(Pista.class));
+        Pista pista = new Pista(1, 1, "1.1", "Pista de prueba", false); // Corregido con tipos de datos correctos
+        try {
+            doThrow(new SQLException("Error de prueba")).when(mockPistaDAO).insertarPista(any(Pista.class));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         assertThrows(PistaException.class, () -> pistaService.insertarPista(pista));
     }
 }

@@ -18,7 +18,7 @@ public class LocalidadDAO {
     public void crearTabla() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS localidades (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "nombre TEXT NOT NULL, " +
+                "nombre TEXT NOT NULL UNIQUE, " +
                 "descripcion TEXT NOT NULL, " +
                 "latitud REAL NOT NULL, " +
                 "longitud REAL NOT NULL);";
@@ -38,22 +38,40 @@ public class LocalidadDAO {
         }
     }
 
-    public void insertarLocalidadesIniciales() throws SQLException {
-        List<Localidad> localidadesIniciales = new ArrayList<>();
-        for (char c = 'A'; c <= 'Z'; c++) {
-            localidadesIniciales.add(new Localidad(String.valueOf(c), "Descripción de " + c, 0.0, 0.0));
-        }
-        for (char c1 = 'A'; c1 <= 'Z'; c1++) {
-            for (char c2 = 'A'; c2 <= 'Z'; c2++) {
-                localidadesIniciales.add(new Localidad("" + c1 + c2, "Descripción de " + c1 + c2, 0.0, 0.0));
-                if (localidadesIniciales.size() == 40) {
-                    break;
-                }
+    public Localidad obtenerLocalidadPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM localidades WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return new Localidad(
+                        resultSet.getInt("id"),
+                        resultSet.getString("nombre"),
+                        resultSet.getString("descripcion"),
+                        resultSet.getDouble("latitud"),
+                        resultSet.getDouble("longitud")
+                );
             }
         }
-        for (Localidad localidad : localidadesIniciales) {
-            insertarLocalidad(localidad);
+        return null;
+    }
+
+    public List<Localidad> obtenerTodasLasLocalidades() throws SQLException {
+        List<Localidad> localidades = new ArrayList<>();
+        String sql = "SELECT * FROM localidades";
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                localidades.add(new Localidad(
+                        resultSet.getInt("id"),
+                        resultSet.getString("nombre"),
+                        resultSet.getString("descripcion"),
+                        resultSet.getDouble("latitud"),
+                        resultSet.getDouble("longitud")
+                ));
+            }
         }
+        return localidades;
     }
 
     public void actualizarLocalidad(Localidad localidad) throws SQLException {
@@ -76,37 +94,16 @@ public class LocalidadDAO {
         }
     }
 
-    public List<Localidad> obtenerTodasLasLocalidades() throws SQLException {
-        List<Localidad> localidades = new ArrayList<>();
-        String sql = "SELECT id, nombre, descripcion, latitud, longitud FROM localidades";
-        try (PreparedStatement statement = this.connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String nombre = resultSet.getString("nombre");
-                String descripcion = resultSet.getString("descripcion");
-                double latitud = resultSet.getDouble("latitud");
-                double longitud = resultSet.getDouble("longitud");
-                localidades.add(new Localidad(id, nombre, descripcion, latitud, longitud));
-            }
+    public void insertarLocalidadesIniciales() throws SQLException {
+        List<Localidad> localidadesIniciales = List.of(
+                new Localidad("A", "Localidad A", -34.90328, -56.18816),
+                new Localidad("B", "Localidad B", -31.3833, -57.9667),
+                new Localidad("C", "Localidad C", -34.9667, -54.95),
+                // Agregar todas las localidades necesarias hasta "AN"
+                new Localidad("AN", "Localidad AN", -33.0, -55.0)
+        );
+        for (Localidad localidad : localidadesIniciales) {
+            insertarLocalidad(localidad);
         }
-        return localidades;
-    }
-
-    public Localidad obtenerLocalidadPorNombre(String nombre) throws SQLException {
-        String sql = "SELECT id, nombre, descripcion, latitud, longitud FROM localidades WHERE nombre = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, nombre);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String descripcion = resultSet.getString("descripcion");
-                    double latitud = resultSet.getDouble("latitud");
-                    double longitud = resultSet.getDouble("longitud");
-                    return new Localidad(id, nombre, descripcion, latitud, longitud);
-                }
-            }
-        }
-        return null;
     }
 }

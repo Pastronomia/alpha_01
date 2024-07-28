@@ -7,4 +7,8 @@ public class PistaException extends Exception {
     public PistaException(String mensaje) {
         super(mensaje);
     }
+
+    public PistaException(String mensaje, Throwable causa) {
+        super(mensaje, causa);
+    }
 }

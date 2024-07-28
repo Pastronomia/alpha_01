@@ -52,20 +52,19 @@ public class MisionManager {
 
     private List<Secuaz> inicializarSecuaces() {
         var secuaces = new ArrayList<Secuaz>();
-        secuaces.add(new Secuaz("Betosecreto", "Escalador, experto en artes ninja y espionaje", 5));
-        secuaces.add(new Secuaz("Ellabella", "Experta en estafas", 4));
-        secuaces.add(new Secuaz("Mindy Ana Son", "Arqueóloga experta en gemas", 3));
-        secuaces.add(new Secuaz("Moonabomber", "Experto en explosivos", 5));
-        for (var secuaz : secuaces) {
-            secuaz.setLocalidad(localidades.get(new Random().nextInt(localidades.size())));
+        for (var localidad : localidades) {
+            secuaces.add(new Secuaz("Betosecreto", "Escalador, experto en artes ninja y espionaje", 5, localidad));
+            secuaces.add(new Secuaz("Ellabella", "Experta en estafas", 4, localidad));
+            secuaces.add(new Secuaz("Mindy Ana Son", "Arqueóloga experta en gemas", 3, localidad));
+            secuaces.add(new Secuaz("Moonabomber", "Experto en explosivos", 5, localidad));
         }
         return secuaces;
     }
 
     private Secuaz inicializarCarmenSandiego() {
-        var carmenSandiego = new Secuaz("Carmen Sandiego", "Líder criminal", 10);
-        carmenSandiego.setLocalidad(localidades.get(new Random().nextInt(localidades.size())));
-        return carmenSandiego;
+        var random = new Random();
+        var localidad = localidades.get(random.nextInt(localidades.size()));
+        return new Secuaz("Carmen Sandiego", "Líder criminal", 10, localidad);
     }
 
     public void iniciarNuevaMision() throws SQLException {
@@ -97,3 +96,5 @@ public class MisionManager {
         return misionActual != null ? misionActual.getDescripcion() : "No hay misión activa";
     }
 }
+
+

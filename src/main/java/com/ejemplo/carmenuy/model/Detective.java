@@ -46,8 +46,12 @@ public class Detective {
 
     private void verificarAscenso() {
         if (this.capturas >= 3 && this.rango == Rango.DETECTIVE_JUNIOR) {
-            setRango(Rango.DETECTIVE_SENIOR);
-        } else if (this.capturas >= 10 && this.rango == Rango.DETECTIVE_SENIOR) {
+            setRango(Rango.DETECTIVE_APRENDIZ);
+        } else if (this.capturas >= 6 && this.rango == Rango.DETECTIVE_APRENDIZ) {
+            setRango(Rango.DETECTIVE_EFICIENTE);
+        } else if (this.capturas >= 10 && this.rango == Rango.DETECTIVE_EFICIENTE) {
+            setRango(Rango.DETECTIVE_JEFE);
+        } else if (this.capturas >= 15 && this.rango == Rango.DETECTIVE_JEFE) {
             setRango(Rango.INSPECTOR);
         }
     }
@@ -55,7 +59,9 @@ public class Detective {
     private static int calcularMovimientosIniciales(Rango rango) {
         return switch (rango) {
             case DETECTIVE_JUNIOR -> 5;
-            case DETECTIVE_SENIOR -> 3;
+            case DETECTIVE_APRENDIZ -> 4;
+            case DETECTIVE_EFICIENTE -> 3;
+            case DETECTIVE_JEFE -> 2;
             case INSPECTOR -> 1;
             default -> throw new IllegalArgumentException("Rango no reconocido");
         };

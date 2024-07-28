@@ -4,9 +4,10 @@ import javax.speech.Central;
 import javax.speech.EngineException;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
+import javax.speech.synthesis.Voice;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -17,13 +18,12 @@ public class TTSManager implements ITTSManager {
     private Synthesizer synthesizer;
     private final Locale locale;
     private final String voiceName;
-    private float volume;
 
     /**
      * Constructor por defecto que inicializa el sintetizador con configuración regional española (Uruguay) y una voz predeterminada.
      */
     public TTSManager() {
-        this(new Locale("es", "UY"), "mbrola_es1");
+        this(new Locale("es", "UY"), "kevin16");
     }
 
     /**
@@ -35,7 +35,6 @@ public class TTSManager implements ITTSManager {
     public TTSManager(Locale locale, String voiceName) {
         this.locale = locale;
         this.voiceName = voiceName;
-        this.volume = 1.0f; // Volumen inicial
         initializeSynthesizer();
     }
 
@@ -46,20 +45,31 @@ public class TTSManager implements ITTSManager {
         try {
             System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
             Central.registerEngineCentral("com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
-            synthesizer = Central.createSynthesizer(new SynthesizerModeDesc(locale));
+            SynthesizerModeDesc desc = new SynthesizerModeDesc(null, "general", locale, null, null);
+            synthesizer = Central.createSynthesizer(desc);
+            if (synthesizer == null) {
+                logger.severe("No se pudo crear el sintetizador.");
+                throw new RuntimeException("No se pudo crear el sintetizador");
+            }
             synthesizer.allocate();
             synthesizer.resume();
-            // Configurar la voz específica aquí si es necesario
-            // synthesizer.getSynthesizerProperties().setVoiceName(voiceName);
+            Voice voice = new Voice(voiceName, Voice.GENDER_NEUTRAL, Voice.AGE_DONT_CARE, null);
+            synthesizer.getSynthesizerProperties().setVoice(voice);
+        } catch (EngineException e) {
+            logger.log(Level.SEVERE, "Error de motor al inicializar el sintetizador", e);
+            throw new RuntimeException("Error de motor al inicializar el sintetizador", e);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error al inicializar el sintetizador", e);
-            throw new RuntimeException("No se pudo inicializar el sintetizador de voz", e);
+            logger.log(Level.SEVERE, "Error general al inicializar el sintetizador", e);
+            throw new RuntimeException("Error general al inicializar el sintetizador", e);
         }
     }
 
     @Override
     public void speak(String text) {
         try {
+            if (synthesizer == null) {
+                throw new IllegalStateException("El sintetizador no está inicializado.");
+            }
             synthesizer.speakPlainText(text, null);
             synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
         } catch (Exception e) {
@@ -74,14 +84,15 @@ public class TTSManager implements ITTSManager {
 
     @Override
     public void setVolume(float volume) {
-        this.volume = volume;
         // La implementación depende de la biblioteca TTS específica
         // Ejemplo: synthesizer.getSynthesizerProperties().setVolume(volume);
     }
 
     @Override
     public float getVolume() {
-        return this.volume;
+        // La implementación depende de la biblioteca TTS específica
+        // Ejemplo: return synthesizer.getSynthesizerProperties().getVolume();
+        return 1.0f; // Valor predeterminado
     }
 
     @Override

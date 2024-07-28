@@ -8,9 +8,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Clase que gestiona la conexión a la base de datos y las operaciones relacionadas con los usuarios.
- */
 public class BaseDeDatosManager {
     private static final Logger LOGGER = Logger.getLogger(BaseDeDatosManager.class.getName());
     private final Connection connection;
@@ -32,11 +29,19 @@ public class BaseDeDatosManager {
                 ")";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.execute();
+            LOGGER.info("Tabla de usuarios creada o verificada exitosamente.");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al crear tabla de usuarios: ", e);
+            throw e;
         }
     }
 
     public void insertarUsuario(Usuario usuario) throws SQLException {
-        String sql = "INSERT INTO usuarios (nombre, apellido, contrasena, rango, capturas, progreso) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuarios (nombre, apellido, contrasena, rango, capturas, progreso) " +
+                "VALUES (?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT(nombre, apellido) DO UPDATE SET " +
+                "contrasena=excluded.contrasena, rango=excluded.rango, " +
+                "capturas=excluded.capturas, progreso=excluded.progreso";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, usuario.getNombre());
             statement.setString(2, usuario.getApellido());
@@ -45,6 +50,10 @@ public class BaseDeDatosManager {
             statement.setInt(5, usuario.getCapturas());
             statement.setString(6, usuario.getProgreso());
             statement.executeUpdate();
+            LOGGER.info("Usuario insertado o actualizado exitosamente.");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al insertar usuario: ", e);
+            throw e;
         }
     }
 
@@ -52,18 +61,22 @@ public class BaseDeDatosManager {
         String sql = "SELECT * FROM usuarios WHERE nombre = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, nombre);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return new Usuario(
-                        resultSet.getInt("id"),
-                        resultSet.getString("nombre"),
-                        resultSet.getString("apellido"),
-                        resultSet.getString("contrasena"),
-                        resultSet.getString("rango"),
-                        resultSet.getInt("capturas"),
-                        resultSet.getString("progreso")
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Usuario(
+                            resultSet.getInt("id"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("apellido"),
+                            resultSet.getString("contrasena"),
+                            resultSet.getString("rango"),
+                            resultSet.getInt("capturas"),
+                            resultSet.getString("progreso")
+                    );
+                }
             }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener usuario por nombre: ", e);
+            throw e;
         }
         return null;
     }
@@ -79,6 +92,10 @@ public class BaseDeDatosManager {
             statement.setString(6, usuario.getProgreso());
             statement.setInt(7, usuario.getId());
             statement.executeUpdate();
+            LOGGER.info("Usuario actualizado exitosamente.");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar usuario: ", e);
+            throw e;
         }
     }
 
@@ -87,10 +104,13 @@ public class BaseDeDatosManager {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             statement.executeUpdate();
+            LOGGER.info("Usuario eliminado exitosamente.");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar usuario: ", e);
+            throw e;
         }
     }
 
-    // Método para inicializar la base de datos y crear las tablas necesarias
     public void inicializarBaseDeDatos() throws SQLException {
         try {
             crearTablaUsuarios();

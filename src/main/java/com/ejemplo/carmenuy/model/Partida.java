@@ -2,8 +2,6 @@ package com.ejemplo.carmenuy.model;
 
 import java.util.List;
 
-
-
 /**
  * Clase que representa una partida en el juego Carmen Sandiego Uruguay.
  */
@@ -61,7 +59,7 @@ public class Partida {
     }
 
     public void capturarSecuaz(Secuaz secuaz) {
-        if (secuaz.getNodo().equals(nodoDetective)) {
+        if (secuaz.getLocalidad().equals(nodoDetective.getLocalidad())) {
             secuaz.setCapturado(true);
             detective.incrementarCapturas();
         }

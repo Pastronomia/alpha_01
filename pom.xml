@@ -2,6 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.ejemplo</groupId>
     <artifactId>carmenuy</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -28,8 +29,9 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.41.2.2</version> <!-- Versión actualizada para corregir vulnerabilidad -->
+            <version>3.41.2.2</version>
         </dependency>
+
         <!-- Dependencia de Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -40,9 +42,10 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.12.4</version> <!-- Versión corregida -->
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
+
         <!-- Dependencia de JUnit 4 -->
         <dependency>
             <groupId>junit</groupId>
@@ -50,6 +53,7 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+
         <!-- Dependencia de JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -63,6 +67,7 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+
         <!-- Dependencia de SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -74,33 +79,41 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.30</version>
         </dependency>
+
         <!-- Dependencia de FreeTTS -->
         <dependency>
             <groupId>net.sf.sociaal</groupId>
             <artifactId>freetts</artifactId>
             <version>1.2.2</version>
         </dependency>
-        <!-- Dependencias adicionales -->
+
+        <!-- Dependencia de ByteBuddy -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.14.15</version> <!-- Versión corregida -->
+            <version>1.14.15</version>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>1.14.15</version> <!-- Versión corregida -->
+            <version>1.14.15</version>
         </dependency>
+
+        <!-- Dependencia de Objenesis -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.2</version> <!-- Versión corregida -->
+            <version>3.2</version>
         </dependency>
+
+        <!-- Dependencia de OpenTest4J -->
         <dependency>
             <groupId>org.opentest4j</groupId>
             <artifactId>opentest4j</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+        <!-- Dependencia de JUnit Platform -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-commons</artifactId>
@@ -111,10 +124,20 @@
             <artifactId>junit-platform-engine</artifactId>
             <version>1.8.2</version>
         </dependency>
+
+        <!-- Dependencia de API Guardian -->
         <dependency>
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
             <version>1.1.2</version>
+        </dependency>
+
+        <!-- Dependencia de JetBrains Annotations -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -127,6 +150,7 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Plugin para la compilación -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -136,6 +160,7 @@
                     <target>17</target>
                 </configuration>
             </plugin>
+            <!-- Plugin para crear un JAR ejecutable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -144,7 +169,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.ejemplo.carmenuy.Main</mainClass>
+                            <mainClass>com.ejemplo.carmenuy.Main</mainClass> <!-- Clase principal del proyecto -->
                         </manifest>
                     </archive>
                     <descriptorRefs>
